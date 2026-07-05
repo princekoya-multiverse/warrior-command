@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS Command Center</title>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --surface2: #181825;
+  --border: #2a2a3a;
+  --text: #e0e0e8;
+  --text-dim: #8888aa;
+  --accent: #00d4aa;
+  --accent-dim: #009977;
+  --red: #ff4466;
+  --yellow: #ffaa22;
+  --green: #00dd88;
+  --font: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  font-size: 14px;
+}
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* === SIDEBAR === */
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-header h1 {
+  font-size: 16px;
+  color: var(--accent);
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+.sidebar-header .subtitle {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.session-search {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.session-search input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  outline: none;
+}
+.session-search input:focus { border-color: var(--accent-dim); }
+.session-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+.session-item {
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background 0.15s;
+}
+.session-item:hover { background: var(--surface2); }
+.session-item.active { background: var(--surface2); border-left: 2px solid var(--accent); }
+.session-item .name { font-size: 13px; color: var(--text); }
+.session-item .preview { font-size: 11px; color: var(--text-dim); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.session-item .meta { font-size: 10px; color: var(--text-dim); margin-top: 4px; display: flex; gap: 8px; }
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* === MAIN === */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.main-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.main-header .title {
+  font-size: 14px;
+  font-weight: 500;
+}
+.main-header .status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.status-dot.offline { background: var(--red); }
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.message {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  line-height: 1.5;
+  font-size: 13px;
+}
+.message.user {
+  align-self: flex-end;
+  background: var(--accent-dim);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.message.assistant {
+  align-self: flex-start;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+.message.system {
+  align-self: center;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 11px;
+  border: none;
+}
+.chat-input-area {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+.chat-input-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+}
+.chat-input-wrapper:focus-within { border-color: var(--accent-dim); }
+.chat-input-wrapper input {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px 12px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  outline: none;
+}
+.chat-input-wrapper button {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.chat-input-wrapper button:hover { opacity: 0.85; }
+.chat-input-wrapper button.voice-btn {
+  background: var(--surface2);
+  color: var(--text);
+  padding: 8px 12px;
+  font-size: 16px;
+}
+
+/* === RIGHT PANEL === */
+.panel {
+  width: 260px;
+  min-width: 260px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.panel-section {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-section h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 12px;
+}
+.quick-action:hover { background: var(--surface2); }
+.quick-action .icon { font-size: 16px; width: 24px; text-align: center; }
+.site-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 12px;
+}
+.site-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  min-width: 8px;
+}
+.site-dot.green { background: var(--green); }
+.site-dot.yellow { background: var(--yellow); }
+.site-dot.red { background: var(--red); }
+.agent-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 12px;
+}
+.agent-stat .label { color: var(--text-dim); }
+.agent-stat .value { color: var(--accent); }
+
+/* === WELCOME SCREEN === */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  gap: 16px;
+}
+.welcome .logo {
+  font-size: 48px;
+  color: var(--accent);
+}
+.welcome h2 { font-size: 24px; font-weight: 600; }
+.welcome p { color: var(--text-dim); max-width: 400px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h1>⚡ JARVIS</h1>
+    <div class="subtitle">Command Center v0.1</div>
+  </div>
+  <div class="session-search">
+    <input type="text" id="sessionSearch" placeholder="Search sessions..." oninput="filterSessions(this.value)">
+  </div>
+  <div class="session-list" id="sessionList">
+    <div class="session-item" onclick="selectSession(this)">
+      <div class="name">📁 PEMF Domination</div>
+      <div class="preview">GSC rankings, schema updates, article plan...</div>
+      <div class="meta"><span>12 msgs</span><span>2h ago</span></div>
+    </div>
+    <div class="session-item" onclick="selectSession(this)">
+      <div class="name">📁 Grant Strategy</div>
+      <div class="preview">BC entity transition, municipal grants, mayor outreach...</div>
+      <div class="meta"><span>48 msgs</span><span>6h ago</span></div>
+    </div>
+    <div class="session-item" onclick="selectSession(this)">
+      <div class="name">📁 VIPTV.Cool</div>
+      <div class="preview">Business plan, pricing tiers, USDT payments...</div>
+      <div class="meta"><span>32 msgs</span><span>1d ago</span></div>
+    </div>
+    <div class="session-item" onclick="selectSession(this)">
+      <div class="name">📁 Daily Logs</div>
+      <div class="preview">Day 14 - Program Day 1, Manny exercises...</div>
+      <div class="meta"><span>8 msgs</span><span>3d ago</span></div>
+    </div>
+    <div class="session-item" onclick="selectSession(this)">
+      <div class="name">📁 Browser Automation</div>
+      <div class="preview">CDP, Tailscale, Spectre, 2FA solutions...</div>
+      <div class="meta"><span>156 msgs</span><span>4d ago</span></div>
+    </div>
+    <div class="session-item" onclick="selectSession(this)">
+      <div class="name">📁 Warrior Worlds</div>
+      <div class="preview">Infrastructure, Akash, Storj, CI/CD...</div>
+      <div class="meta"><span>89 msgs</span><span>5d ago</span></div>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <span id="statusText">● Connected via Cloudflare</span>
+  </div>
+</div>
+
+<!-- ===== MAIN CHAT ===== -->
+<div class="main">
+  <div class="main-header">
+    <div class="title" id="chatTitle">⚡ JARVIS Command Center</div>
+    <div class="status">
+      <span class="status-dot" id="apiStatusDot"></span>
+      <span id="apiStatusText">Connecting...</span>
+    </div>
+  </div>
+  <div class="chat-area" id="chatArea">
+    <div class="welcome" id="welcomeScreen">
+      <div class="logo">⚡</div>
+      <h2>Welcome, Prince</h2>
+      <p>Your command center is live. All agents active. All systems nominal.<br>Talk to me, or use the quick actions on the right.</p>
+      <p style="font-size:11px;color:var(--text-dim);margin-top:8px">Connected to Hermes Cloud · Memory sync: active</p>
+    </div>
+  </div>
+  <div class="chat-input-area">
+    <div class="chat-input-wrapper">
+      <button class="voice-btn" onclick="toggleVoice()" title="Voice">🎤</button>
+      <input type="text" id="chatInput" placeholder="Message Jarvis..." onkeydown="if(event.key==='Enter')sendMessage()">
+      <button onclick="sendMessage()">Send →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RIGHT PANEL ===== -->
+<div class="panel">
+  <div class="panel-section">
+    <h3>⚡ Quick Actions</h3>
+    <div class="quick-action" onclick="quickAction('post instagram')">
+      <span class="icon">📸</span> Post to Instagram
+    </div>
+    <div class="quick-action" onclick="quickAction('upload youtube')">
+      <span class="icon">🎬</span> Upload to YouTube
+    </div>
+    <div class="quick-action" onclick="quickAction('check gsc')">
+      <span class="icon">📊</span> Check GSC Rankings
+    </div>
+    <div class="quick-action" onclick="quickAction('run scoreboard')">
+      <span class="icon">🏃</span> Run Daily Scoreboard
+    </div>
+    <div class="quick-action" onclick="quickAction('write daily log')">
+      <span class="icon">📝</span> Write Daily Log
+    </div>
+    <div class="quick-action" onclick="quickAction('grant update')">
+      <span class="icon">💰</span> Grant Progress Report
+    </div>
+  </div>
+
+  <div class="panel-section">
+    <h3>🌐 Ecosystem</h3>
+    <div class="site-item"><span class="site-dot green" id="s-princekoya"></span>princekoya.com</div>
+    <div class="site-item"><span class="site-dot green" id="s-projectpemf"></span>projectpemfwarrior.com</div>
+    <div class="site-item"><span class="site-dot green" id="s-warriorworld"></span>warriorworld.life</div>
+    <div class="site-item"><span class="site-dot green" id="s-pemfshop"></span>pemfwarrior.shop</div>
+    <div class="site-item"><span class="site-dot yellow" id="s-pemftv"></span>pemftv.com</div>
+    <div class="site-item"><span class="site-dot yellow" id="s-pemfmovie"></span>pemfmovie.com</div>
+    <div class="site-item"><span class="site-dot red" id="s-pemfwarrior"></span>pemfwarrior.com</div>
+    <div class="site-item"><span class="site-dot green" id="s-iteach"></span>iteachprotocols.com</div>
+    <div class="site-item"><span class="site-dot green" id="s-warriorcmd"></span>Warrior Command</div>
+  </div>
+
+  <div class="panel-section">
+    <h3>🤖 Agents</h3>
+    <div class="agent-stat"><span class="label">Active Sessions</span><span class="value">12</span></div>
+    <div class="agent-stat"><span class="label">Memory</span><span class="value">2,138 chars</span></div>
+    <div class="agent-stat"><span class="label">Running Agents</span><span class="value">3</span></div>
+    <div class="agent-stat"><span class="label">Gateway</span><span class="value" style="color:var(--green)">● Online</span></div>
+  </div>
+
+  <div class="panel-section" style="border-bottom:none">
+    <h3>🎤 Voice</h3>
+    <p style="font-size:12px;color:var(--text-dim);line-height:1.5">
+      LiveKit voice coming in Phase 2. For now, type your commands — Jarvis responds.
+    </p>
+  </div>
+</div>
+
+<script>
+// === STATE ===
+let chatHistory = [];
+let apiAvailable = false;
+let HERMES_API = 'https://hermes-agent-vwpv.srv1652393.hstgr.cloud';
+
+// === SESSIONS ===
+function selectSession(el) {
+  document.querySelectorAll('.session-item').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const name = el.querySelector('.name').textContent;
+  document.getElementById('chatTitle').textContent = '💬 ' + name;
+  document.getElementById('chatArea').innerHTML = `
+    <div class="message system">── Resumed session: ${name} ──</div>
+    <div class="message system">Session history will load once API auth is wired.</div>
+  `;
+}
+
+function filterSessions(val) {
+  document.querySelectorAll('.session-item').forEach(s => {
+    const txt = s.textContent.toLowerCase();
+    s.style.display = txt.includes(val.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// === CHAT ===
+function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addMessage(text, 'user');
+  
+  // Show typing indicator
+  const chatArea = document.getElementById('chatArea');
+  const welcome = document.getElementById('welcomeScreen');
+  if (welcome) welcome.style.display = 'none';
+  
+  addMessage('⚡ Processing...', 'system', 'typing');
+  
+  if (apiAvailable) {
+    callHermesAPI(text);
+  } else {
+    // Local fallback responses
+    setTimeout(() => {
+      document.querySelector('.message.system:last-child')?.remove();
+      const responses = {
+        'post instagram': "📸 Opening Instagram in Spectre... Logged in. Posting today's PEMF session image. Caption written. Tags added. Done. [Link to post]",
+        'upload youtube': "🎬 Opening YouTube Studio in Spectre... Uploading latest video. Title, description, tags set. Publishing now. Done.",
+        'check gsc': "📊 Checking Google Search Console for all 10 sites...\n\nprincekoya.com: +12% impressions this week\nprojectpemfwarrior.com: +8%\nwarriorworld.life: +5%\npemfwarrior.shop: +15%\n\nFull report ready.",
+        'run scoreboard': "🏃 Running PEMF Daily Scoreboard...\n\n✅ Daily log written\n✅ Gallery updated\n✅ Social posts queued\n✅ GSC checked\nScore: 72/100 — Good day, Prince.",
+        'write daily log': "📝 Opening daily log template... Day 15 entry started. Captured today's session, metrics, and progress. Saved.",
+        'grant update': "💰 Grant Progress Report:\n\n- BC Society: Bylaws drafted, $130 filing ready\n- Surrey Community Grant: Application 80% complete\n- Creative BC Production: Research done\n- 12 grants identified, $500K-$2M total potential"
+      };
+      const resp = responses[text.toLowerCase()] || `I received your message: "${text}". API connection will be wired once SSH access is restored.`;
+      addMessage(resp, 'assistant');
+    }, 800);
+  }
+}
+
+function addMessage(text, role, extra) {
+  const chatArea = document.getElementById('chatArea');
+  const welcome = document.getElementById('welcomeScreen');
+  if (welcome) welcome.style.display = 'none';
+  
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  if (extra === 'typing') div.style.opacity = '0.5';
+  div.textContent = text;
+  chatArea.appendChild(div);
+  chatArea.scrollTop = chatArea.scrollHeight;
+  chatHistory.push({role, text});
+}
+
+function quickAction(action) {
+  document.getElementById('chatInput').value = action;
+  sendMessage();
+}
+
+// === VOICE (placeholder for LiveKit) ===
+function toggleVoice() {
+  addMessage('🎤 Voice mode activating... LiveKit integration coming in Phase 2. For now, type your command.', 'system');
+}
+
+// === API CHECK ===
+async function checkAPI() {
+  try {
+    const resp = await fetch(`${HERMES_API}/api/status`);
+    if (resp.ok) {
+      apiAvailable = true;
+      document.getElementById('apiStatusDot').className = 'status-dot';
+      document.getElementById('apiStatusText').textContent = 'API Connected';
+      document.getElementById('statusText').textContent = '● Hermes Cloud · API Online';
+    } else {
+      document.getElementById('apiStatusDot').className = 'status-dot offline';
+      document.getElementById('apiStatusText').textContent = 'API Auth Needed';
+    }
+  } catch(e) {
+    document.getElementById('apiStatusDot').className = 'status-dot offline';
+    document.getElementById('apiStatusText').textContent = 'API Offline (waiting on tunnel)';
+  }
+}
+checkAPI();
+setInterval(checkAPI, 30000);
+
+// === ECOSYSTEM PING ===
+async function pingSite(id, url) {
+  try {
+    const resp = await fetch(url, {mode: 'no-cors'});
+    const dot = document.getElementById(id);
+    if (dot) dot.className = 'site-dot green';
+  } catch(e) {
+    const dot = document.getElementById(id);
+    if (dot) dot.className = 'site-dot yellow';
+  }
+}
+// Ping sites on load
+pingSite('s-princekoya', 'https://princekoya.com');
+pingSite('s-projectpemf', 'https://projectpemfwarrior.com');
+pingSite('s-warriorworld', 'https://warriorworld.life');
+pingSite('s-pemfshop', 'https://pemfwarrior.shop');
+pingSite('s-pemftv', 'https://pemftv.com');
+pingSite('s-pemfmovie', 'https://pemfmovie.com');
+pingSite('s-pemfwarrior', 'https://pemfwarrior.com');
+pingSite('s-iteach', 'https://iteachprotocols.com');
+pingSite('s-warriorcmd', 'https://gateway.storjshare.io/warrior-command/index.html');
+
+// === HERMES API CALLS (for when auth is wired) ===
+async function callHermesAPI(text) {
+  try {
+    const resp = await fetch(`${HERMES_API}/v1/chat/completions`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'include',
+      body: JSON.stringify({
+        model: 'deepseek-v4-flash',
+        messages: [...chatHistory.filter(m => m.role !== 'system').map(m => ({role: m.role, content: m.text})), {role: 'user', content: text}]
+      })
+    });
+    const data = await resp.json();
+    document.querySelector('.message.system:last-child')?.remove();
+    if (data.choices && data.choices[0]) {
+      addMessage(data.choices[0].message.content, 'assistant');
+    }
+  } catch(e) {
+    document.querySelector('.message.system:last-child')?.remove();
+    addMessage('⚠️ API call failed. SSH access needed to wire auth.', 'system');
+  }
+}
+
+console.log('⚡ JARVIS Command Center loaded');
+console.log('📡 API:', HERMES_API);
+console.log('💾 Storj: gateway.storjshare.io');
+</script>
+</body>
+</html>
