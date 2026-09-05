@@ -3,567 +3,1270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JARVIS Command Center</title>
+<title>WARRIOR COMMAND — Back Office</title>
 <style>
-:root {
-  --bg: #0a0a0f;
-  --surface: #111118;
-  --surface2: #181825;
-  --border: #2a2a3a;
-  --text: #e0e0e8;
-  --text-dim: #8888aa;
-  --accent: #00d4aa;
-  --accent-dim: #009977;
-  --red: #ff4466;
-  --yellow: #ffaa22;
-  --green: #00dd88;
-  --font: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  height: 100vh;
-  display: flex;
-  overflow: hidden;
-  font-size: 14px;
-}
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --surface3: #242440;
+    --gold: #c9a84c;
+    --gold-dim: #8a7a3a;
+    --green: #2ecc71;
+    --green-bg: rgba(46, 204, 113, 0.12);
+    --red: #e74c3c;
+    --orange: #f39c12;
+    --blue: #3498db;
+    --text: #e8e8ee;
+    --text-dim: #8888aa;
+    --text-muted: #555570;
+    --border: #2a2a40;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
 
-/* === SIDEBAR === */
-.sidebar {
-  width: 260px;
-  min-width: 260px;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.sidebar-header {
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
-}
-.sidebar-header h1 {
-  font-size: 16px;
-  color: var(--accent);
-  font-weight: 600;
-  letter-spacing: -0.5px;
-}
-.sidebar-header .subtitle {
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 2px;
-}
-.session-search {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.session-search input {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 12px;
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 12px;
-  outline: none;
-}
-.session-search input:focus { border-color: var(--accent-dim); }
-.session-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px;
-}
-.session-item {
-  padding: 10px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-bottom: 2px;
-  transition: background 0.15s;
-}
-.session-item:hover { background: var(--surface2); }
-.session-item.active { background: var(--surface2); border-left: 2px solid var(--accent); }
-.session-item .name { font-size: 13px; color: var(--text); }
-.session-item .preview { font-size: 11px; color: var(--text-dim); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.session-item .meta { font-size: 10px; color: var(--text-dim); margin-top: 4px; display: flex; gap: 8px; }
-.sidebar-footer {
-  padding: 12px 16px;
-  border-top: 1px solid var(--border);
-  font-size: 11px;
-  color: var(--text-dim);
-}
+  /* === LOGIN GATE === */
+  #login-gate {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+    z-index: 9999;
+  }
+  #login-gate.hidden { display: none; }
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 40px 40px;
+    width: 400px;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .login-box h1 {
+    font-size: 24px;
+    margin-bottom: 4px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .login-box .subtitle {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+  }
+  .login-box input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 16px;
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .login-box input:focus { border-color: var(--gold); }
+  .login-box button {
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    border: none;
+    border-radius: 10px;
+    color: #0a0a0f;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: opacity 0.2s;
+  }
+  .login-box button:hover { opacity: 0.9; }
+  .login-box .error {
+    color: var(--red);
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+  }
+  .login-box .hint {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 24px;
+  }
 
-/* === MAIN === */
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.main-header {
-  padding: 12px 20px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.main-header .title {
-  font-size: 14px;
-  font-weight: 500;
-}
-.main-header .status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-}
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-}
-.status-dot.offline { background: var(--red); }
-.chat-area {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.message {
-  max-width: 80%;
-  padding: 12px 16px;
-  border-radius: 10px;
-  line-height: 1.5;
-  font-size: 13px;
-}
-.message.user {
-  align-self: flex-end;
-  background: var(--accent-dim);
-  color: #fff;
-  border-bottom-right-radius: 4px;
-}
-.message.assistant {
-  align-self: flex-start;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-bottom-left-radius: 4px;
-}
-.message.system {
-  align-self: center;
-  background: transparent;
-  color: var(--text-dim);
-  font-size: 11px;
-  border: none;
-}
-.chat-input-area {
-  padding: 16px 20px;
-  border-top: 1px solid var(--border);
-}
-.chat-input-wrapper {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 4px;
-}
-.chat-input-wrapper:focus-within { border-color: var(--accent-dim); }
-.chat-input-wrapper input {
-  flex: 1;
-  background: none;
-  border: none;
-  padding: 10px 12px;
-  color: var(--text);
-  font-family: var(--font);
-  font-size: 13px;
-  outline: none;
-}
-.chat-input-wrapper button {
-  background: var(--accent);
-  color: #000;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-.chat-input-wrapper button:hover { opacity: 0.85; }
-.chat-input-wrapper button.voice-btn {
-  background: var(--surface2);
-  color: var(--text);
-  padding: 8px 12px;
-  font-size: 16px;
-}
+  /* === LAYOUT === */
+  #app {
+    display: none;
+    min-height: 100vh;
+  }
+  #app.active { display: flex; }
 
-/* === RIGHT PANEL === */
-.panel {
-  width: 260px;
-  min-width: 260px;
-  background: var(--surface);
-  border-left: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-.panel-section {
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
-}
-.panel-section h3 {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-dim);
-  margin-bottom: 10px;
-}
-.quick-action {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;
-  font-size: 12px;
-}
-.quick-action:hover { background: var(--surface2); }
-.quick-action .icon { font-size: 16px; width: 24px; text-align: center; }
-.site-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  font-size: 12px;
-}
-.site-item .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  min-width: 8px;
-}
-.site-dot.green { background: var(--green); }
-.site-dot.yellow { background: var(--yellow); }
-.site-dot.red { background: var(--red); }
-.agent-stat {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-size: 12px;
-}
-.agent-stat .label { color: var(--text-dim); }
-.agent-stat .value { color: var(--accent); }
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+  }
+  .sidebar-brand {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 12px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .sidebar-brand small {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    margin-top: 2px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active {
+    background: var(--gold);
+    color: #0a0a0f;
+  }
+  .nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+  .nav-spacer { flex: 1; }
 
-/* === WELCOME SCREEN === */
-.welcome {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  text-align: center;
-  gap: 16px;
-}
-.welcome .logo {
-  font-size: 48px;
-  color: var(--accent);
-}
-.welcome h2 { font-size: 24px; font-weight: 600; }
-.welcome p { color: var(--text-dim); max-width: 400px; line-height: 1.6; }
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    padding: 32px 40px;
+    max-width: 1100px;
+  }
+
+  /* === PAGE SECTIONS === */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  h1.page-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .page-subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--gold);
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  /* === STAT CARDS === */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--gold);
+  }
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* === GRANT TABLE === */
+  .grant-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .grant-table th {
+    text-align: left;
+    padding: 10px 12px;
+    color: var(--text-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+  }
+  .grant-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .grant-table tr:hover td { background: var(--surface2); }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge.green { background: var(--green-bg); color: var(--green); }
+  .badge.orange { background: rgba(243, 156, 18, 0.15); color: var(--orange); }
+  .badge.blue { background: rgba(52, 152, 219, 0.15); color: var(--blue); }
+  .badge.red { background: rgba(231, 76, 60, 0.15); color: var(--red); }
+  .badge.gold { background: rgba(201, 168, 76, 0.2); color: var(--gold); }
+  .amount { font-weight: 700; color: var(--gold); }
+
+  /* === CHECKLIST === */
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .checklist-item input[type="checkbox"] {
+    appearance: none;
+    width: 20px; height: 20px;
+    min-width: 20px;
+    border: 2px solid var(--text-muted);
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .checklist-item input[type="checkbox"]:checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .checklist-item input[type="checkbox"]:checked::after {
+    content: "✓";
+    color: #0a0a0f;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .checklist-item .text {
+    flex: 1;
+    font-size: 14px;
+  }
+  .checklist-item .text.done {
+    text-decoration: line-through;
+    color: var(--text-dim);
+  }
+  .checklist-item .phase-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .progress-bar {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    margin: 12px 0 20px;
+    overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: right;
+    margin-top: -12px;
+    margin-bottom: 16px;
+  }
+
+  /* === CHAT === */
+  #chat-messages {
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+  }
+  .chat-msg {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    max-width: 85%;
+  }
+  .chat-msg.user {
+    background: var(--surface3);
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+  .chat-msg.jarvis {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg .sender {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .chat-msg.user .sender { color: var(--gold); }
+  .chat-msg.jarvis .sender { color: var(--blue); }
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+  }
+  .chat-input-row input {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+  }
+  .chat-input-row input:focus { border-color: var(--gold); }
+  .chat-input-row button {
+    padding: 12px 20px;
+    background: var(--gold);
+    border: none;
+    border-radius: 10px;
+    color: #0a0a0f;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .chat-input-row button:hover { opacity: 0.9; }
+  .chat-status {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* === CONTACT CARDS === */
+  .contact-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: var(--surface);
+  }
+  .contact-card .avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--surface3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    min-width: 48px;
+  }
+  .contact-card .info { flex: 1; }
+  .contact-card .name { font-weight: 700; font-size: 15px; }
+  .contact-card .role { font-size: 12px; color: var(--text-dim); }
+  .contact-card .meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .contact-card .status-dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 4px;
+  }
+  .status-dot.pending { background: var(--orange); }
+  .status-dot.contacted { background: var(--blue); }
+  .status-dot.meeting { background: var(--green); }
+  .status-dot.done { background: var(--text-muted); }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 60px;
+      min-width: 60px;
+      padding: 16px 8px;
+    }
+    .sidebar-brand { font-size: 10px; padding: 0 4px 16px; text-align: center; }
+    .sidebar-brand small { display: none; }
+    .nav-item { justify-content: center; padding: 12px 8px; }
+    .nav-item .label { display: none; }
+    .nav-item .icon { font-size: 20px; }
+    .main { margin-left: 60px; padding: 20px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* === TIMELINE === */
+  .timeline {
+    position: relative;
+    padding-left: 24px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 16px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid var(--bg);
+  }
+  .timeline-item .date {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .timeline-item h3 {
+    font-size: 14px;
+    margin: 4px 0;
+  }
+
+  /* === WEBHOOK SETUP === */
+  code {
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--gold);
+  }
+  .setup-steps ol {
+    padding-left: 20px;
+  }
+  .setup-steps li {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .toggle-group { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .toggle-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle-btn.active { background: var(--gold); color: #0a0a0f; border-color: var(--gold); }
+  .toggle-btn:hover:not(.active) { border-color: var(--text-dim); }
 </style>
 </head>
 <body>
 
-<!-- ===== SIDEBAR ===== -->
-<div class="sidebar">
-  <div class="sidebar-header">
-    <h1>⚡ JARVIS</h1>
-    <div class="subtitle">Command Center v0.1</div>
-  </div>
-  <div class="session-search">
-    <input type="text" id="sessionSearch" placeholder="Search sessions..." oninput="filterSessions(this.value)">
-  </div>
-  <div class="session-list" id="sessionList">
-    <div class="session-item" onclick="selectSession(this)">
-      <div class="name">📁 PEMF Domination</div>
-      <div class="preview">GSC rankings, schema updates, article plan...</div>
-      <div class="meta"><span>12 msgs</span><span>2h ago</span></div>
-    </div>
-    <div class="session-item" onclick="selectSession(this)">
-      <div class="name">📁 Grant Strategy</div>
-      <div class="preview">BC entity transition, municipal grants, mayor outreach...</div>
-      <div class="meta"><span>48 msgs</span><span>6h ago</span></div>
-    </div>
-    <div class="session-item" onclick="selectSession(this)">
-      <div class="name">📁 VIPTV.Cool</div>
-      <div class="preview">Business plan, pricing tiers, USDT payments...</div>
-      <div class="meta"><span>32 msgs</span><span>1d ago</span></div>
-    </div>
-    <div class="session-item" onclick="selectSession(this)">
-      <div class="name">📁 Daily Logs</div>
-      <div class="preview">Day 14 - Program Day 1, Manny exercises...</div>
-      <div class="meta"><span>8 msgs</span><span>3d ago</span></div>
-    </div>
-    <div class="session-item" onclick="selectSession(this)">
-      <div class="name">📁 Browser Automation</div>
-      <div class="preview">CDP, Tailscale, Spectre, 2FA solutions...</div>
-      <div class="meta"><span>156 msgs</span><span>4d ago</span></div>
-    </div>
-    <div class="session-item" onclick="selectSession(this)">
-      <div class="name">📁 Warrior Worlds</div>
-      <div class="preview">Infrastructure, Akash, Storj, CI/CD...</div>
-      <div class="meta"><span>89 msgs</span><span>5d ago</span></div>
-    </div>
-  </div>
-  <div class="sidebar-footer">
-    <span id="statusText">● Connected via Cloudflare</span>
+<!-- ====== LOGIN GATE ====== -->
+<div id="login-gate">
+  <div class="login-box">
+    <h1>⚔️ WARRIOR COMMAND</h1>
+    <p class="subtitle">BACK OFFICE / STRATEGY DASHBOARD</p>
+    <input type="password" id="login-pass" placeholder="Enter passcode" autofocus>
+    <button onclick="checkLogin()">UNLOCK</button>
+    <p class="error" id="login-error">Wrong passcode. Try again.</p>
+    <p class="hint">First time? Set your passcode below.</p>
   </div>
 </div>
 
-<!-- ===== MAIN CHAT ===== -->
-<div class="main">
-  <div class="main-header">
-    <div class="title" id="chatTitle">⚡ JARVIS Command Center</div>
-    <div class="status">
-      <span class="status-dot" id="apiStatusDot"></span>
-      <span id="apiStatusText">Connecting...</span>
-    </div>
-  </div>
-  <div class="chat-area" id="chatArea">
-    <div class="welcome" id="welcomeScreen">
-      <div class="logo">⚡</div>
-      <h2>Welcome, Prince</h2>
-      <p>Your command center is live. All agents active. All systems nominal.<br>Talk to me, or use the quick actions on the right.</p>
-      <p style="font-size:11px;color:var(--text-dim);margin-top:8px">Connected to Hermes Cloud · Memory sync: active</p>
-    </div>
-  </div>
-  <div class="chat-input-area">
-    <div class="chat-input-wrapper">
-      <button class="voice-btn" onclick="toggleVoice()" title="Voice">🎤</button>
-      <input type="text" id="chatInput" placeholder="Message Jarvis..." onkeydown="if(event.key==='Enter')sendMessage()">
-      <button onclick="sendMessage()">Send →</button>
-    </div>
-  </div>
-</div>
+<!-- ====== APP ====== -->
+<div id="app">
 
-<!-- ===== RIGHT PANEL ===== -->
-<div class="panel">
-  <div class="panel-section">
-    <h3>⚡ Quick Actions</h3>
-    <div class="quick-action" onclick="quickAction('post instagram')">
-      <span class="icon">📸</span> Post to Instagram
-    </div>
-    <div class="quick-action" onclick="quickAction('upload youtube')">
-      <span class="icon">🎬</span> Upload to YouTube
-    </div>
-    <div class="quick-action" onclick="quickAction('check gsc')">
-      <span class="icon">📊</span> Check GSC Rankings
-    </div>
-    <div class="quick-action" onclick="quickAction('run scoreboard')">
-      <span class="icon">🏃</span> Run Daily Scoreboard
-    </div>
-    <div class="quick-action" onclick="quickAction('write daily log')">
-      <span class="icon">📝</span> Write Daily Log
-    </div>
-    <div class="quick-action" onclick="quickAction('grant update')">
-      <span class="icon">💰</span> Grant Progress Report
-    </div>
-  </div>
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">⚔️ WARRIOR<small>COMMAND</small></div>
 
-  <div class="panel-section">
-    <h3>🌐 Ecosystem</h3>
-    <div class="site-item"><span class="site-dot green" id="s-princekoya"></span>princekoya.com</div>
-    <div class="site-item"><span class="site-dot green" id="s-projectpemf"></span>projectpemfwarrior.com</div>
-    <div class="site-item"><span class="site-dot green" id="s-warriorworld"></span>warriorworld.life</div>
-    <div class="site-item"><span class="site-dot green" id="s-pemfshop"></span>pemfwarrior.shop</div>
-    <div class="site-item"><span class="site-dot yellow" id="s-pemftv"></span>pemftv.com</div>
-    <div class="site-item"><span class="site-dot yellow" id="s-pemfmovie"></span>pemfmovie.com</div>
-    <div class="site-item"><span class="site-dot red" id="s-pemfwarrior"></span>pemfwarrior.com</div>
-    <div class="site-item"><span class="site-dot green" id="s-iteach"></span>iteachprotocols.com</div>
-    <div class="site-item"><span class="site-dot green" id="s-warriorcmd"></span>Warrior Command</div>
-  </div>
+  <a class="nav-item active" data-page="dashboard" onclick="nav(this)"><span class="icon">📊</span><span class="label">Dashboard</span></a>
+  <a class="nav-item" data-page="strategy" onclick="nav(this)"><span class="icon">🏛️</span><span class="label">Entity Strategy</span></a>
+  <a class="nav-item" data-page="grants" onclick="nav(this)"><span class="icon">💰</span><span class="label">Grant Tracker</span></a>
+  <a class="nav-item" data-page="contacts" onclick="nav(this)"><span class="icon">📞</span><span class="label">Mayor / MLA</span></a>
+  <a class="nav-item" data-page="checklist" onclick="nav(this)"><span class="icon">✅</span><span class="label">Action Checklist</span></a>
+  <a class="nav-item" data-page="chat" onclick="nav(this)"><span class="icon">💬</span><span class="label">Jarvis Chat</span></a>
+  <a class="nav-item" data-page="settings" onclick="nav(this)"><span class="icon">⚙️</span><span class="label">Settings</span></a>
 
-  <div class="panel-section">
-    <h3>🤖 Agents</h3>
-    <div class="agent-stat"><span class="label">Active Sessions</span><span class="value">12</span></div>
-    <div class="agent-stat"><span class="label">Memory</span><span class="value">2,138 chars</span></div>
-    <div class="agent-stat"><span class="label">Running Agents</span><span class="value">3</span></div>
-    <div class="agent-stat"><span class="label">Gateway</span><span class="value" style="color:var(--green)">● Online</span></div>
-  </div>
+  <div class="nav-spacer"></div>
+  <a class="nav-item" onclick="logout()" style="color: var(--text-muted);"><span class="icon">🚪</span><span class="label">Lock</span></a>
+</nav>
 
-  <div class="panel-section" style="border-bottom:none">
-    <h3>🎤 Voice</h3>
-    <p style="font-size:12px;color:var(--text-dim);line-height:1.5">
-      LiveKit voice coming in Phase 2. For now, type your commands — Jarvis responds.
-    </p>
-  </div>
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ====== DASHBOARD ====== -->
+  <section class="page active" id="page-dashboard">
+    <h1 class="page-title">📊 War Room Overview</h1>
+    <p class="page-subtitle">Your command center for the Warrior World funding campaign</p>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="num" id="stat-grants">0</div><div class="label">Grant Targets</div></div>
+      <div class="stat-card"><div class="num" id="stat-potential">$0</div><div class="label">Total Potential</div></div>
+      <div class="stat-card"><div class="num" id="stat-tasks">0/0</div><div class="label">Tasks Done</div></div>
+      <div class="stat-card"><div class="num" id="stat-contacts">0</div><div class="label">Contacts</div></div>
+      <div class="stat-card" style="border-left:3px solid var(--gold);"><div class="num" style="color:var(--gold);">S0086075</div><div class="label">Society Registered ✅</div></div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 Priority Actions This Week</h2>
+      <div id="dash-priority-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>📅 Upcoming Deadlines</h2>
+      <div id="dash-deadlines"></div>
+    </div>
+
+    <div class="card">
+      <h2>⚡ Quick Reference</h2>
+      <p style="font-size:14px;color:var(--text-dim);margin-bottom:12px;">
+        <strong style="color:var(--text);">Entity Status:</strong> BC Co-op (non-core) → <span style="color:var(--gold);">BC Society</span> — cost <strong>$130</strong>
+      </p>
+      <p style="font-size:14px;color:var(--text-dim);margin-bottom:12px;">
+        <strong style="color:var(--text);">Total Grant Potential:</strong> <span style="color:var(--gold);font-weight:700;">$2M - $35M+</span> across all programs (incl. AI grants)
+      </p>
+      <p style="font-size:14px;color:var(--text-dim);">
+        <strong style="color:var(--text);">Top Target:</strong> <span style="color:var(--green);">BC Gaming Capital Project</span> ($20K - $250K) — opens Sept 1 annually
+      </p>
+    </div>
+  </section>
+
+  <!-- ====== ENTITY STRATEGY ====== -->
+  <section class="page" id="page-strategy">
+    <h1 class="page-title">🏛️ Entity Strategy</h1>
+    <p class="page-subtitle">Switching from BC Co-op to BC Society — the key that unlocks every grant</p>
+
+    <div class="card">
+      <h2>Where You Are Now</h2>
+      <p style="font-size:14px;color:var(--text-dim);margin-bottom:12px;">
+        <strong style="color:var(--text);">Entity:</strong> BC Cooperative Association (non-core)<br>
+        <strong style="color:var(--text);">Problem:</strong> Co-ops are <strong style="color:var(--red);">not eligible</strong> for most government grants. Cannot issue charitable tax receipts.
+      </p>
+      <div class="stats-row" style="grid-template-cols:repeat(3,1fr);">
+        <div class="stat-card"><div class="num" style="color:var(--red);">❌</div><div class="label">Grant Eligible</div></div>
+        <div class="stat-card"><div class="num" style="color:var(--red);">❌</div><div class="label">Tax Receipts</div></div>
+        <div class="stat-card"><div class="num" style="color:var(--red);">❌</div><div class="label">Film Funding</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Where You Need To Be</h2>
+      <p style="font-size:14px;color:var(--text-dim);margin-bottom:12px;">
+        <strong style="color:var(--text);">Entity:</strong> BC Society (non-profit) under the <em>Societies Act</em><br>
+        Then: <strong style="color:var(--gold);">CRA Registered Charity</strong> for donation tax receipts
+      </p>
+      <div class="stats-row" style="grid-template-cols:repeat(3,1fr);">
+        <div class="stat-card"><div class="num" style="color:var(--green);">✅</div><div class="label">Grant Eligible</div></div>
+        <div class="stat-card"><div class="num" style="color:var(--green);">✅</div><div class="label">Tax Receipts</div></div>
+        <div class="stat-card"><div class="num" style="color:var(--green);">✅</div><div class="label">Film Funding</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>The Switch Process</h2>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">No direct "convert co-op to society" exists in BC law. You dissolve the co-op and register a new society. Or simpler: just register the society now, dissolve the co-op later.</p>
+      <table class="grant-table">
+        <tr><th>Step</th><th>Action</th><th>Cost</th><th>Timeline</th></tr>
+        <tr><td>1</td><td><strong>Check society name availability</strong> — BC Registry Online</td><td>$30</td><td>1 day</td></tr>
+        <tr><td>2</td><td><strong>File society incorporation</strong> — Submit constitution + bylaws under <em>Societies Act</em></td><td>$100</td><td>1-2 weeks</td></tr>
+        <tr><td>3</td><td><strong>Society exists!</strong> — Now you can apply for grants. Dissolve co-op at your leisure.</td><td>$0</td><td>Immediate</td></tr>
+        <tr><td>4</td><td><strong>Pass special resolution</strong> — 75% member vote to dissolve co-op</td><td>$0</td><td>1 month</td></tr>
+        <tr><td>5</td><td><strong>File voluntary dissolution</strong> — Submit affidavit + resolution to BC Registry</td><td>~$30</td><td>2-4 weeks</td></tr>
+        <tr><td>6</td><td><strong>Transfer assets</strong> — Move co-op assets to the society</td><td>$0</td><td>Same day</td></tr>
+      </table>
+      <p style="margin-top:12px;font-size:14px;color:var(--gold);font-weight:600;">
+        ⚡ TOTAL: ~$160 — Do Step 1 and 2 THIS WEEK. Everything depends on it.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>⚔️ TWO-ENTITY STRATEGY — Warrior World Tech + Warrior World Society <span style="color:var(--gold);font-size:15px;">(No. S0086075 · Registered ✅)</span></h2>
+      <p style="font-size:14px;color:var(--text-dim);margin-bottom:12px;">
+        <strong style="color:var(--green);">Perfectly legal.</strong> Two separate legal entities. Different structures. Same mission.
+      </p>
+      <table class="grant-table">
+        <tr><th></th><th>🏛️ Warrior World Society (NEW)</th><th>⚡ Warrior World Tech Co-op (EXISTING)</th></tr>
+        <tr><td><strong>Entity Type</strong></td><td>BC Society (non-profit)</td><td>BC Co-op</td></tr>
+        <tr><td><strong>What It Does</strong></td><td>Grants, charitable programs, documentary, AI-for-disability</td><td>Tech dev, WOW Token, blockchain, holds $300K loan</td></tr>
+        <tr><td><strong>Directors</strong></td><td>Board (Chelsy, Kevin Cairns, + 1)</td><td>Members</td></tr>
+        <tr><td><strong>Funding</strong></td><td>Government grants, charitable donations</td><td>Token sales, investment, revenue</td></tr>
+        <tr><td><strong>Tax Status</strong></td><td>CRA Charity (after application) — tax receipts</td><td>Standard taxpayer</td></tr>
+        <tr><td><strong>Relationship</strong></td><td colspan="2">Society contracts with Co-op for AI services. Co-op donates to Society. Separate bank accounts, arm's length.</td></tr>
+      </table>
+      <p style="font-size:13px;color:var(--gold);margin-top:12px;">
+        💡 Co-op keeps the $300K loan and tech. Society starts fresh. Grant apps only talk about humanitarian AI — no crypto mentioned.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Suggested Names</h2>
+      <p style="font-size:14px;color:var(--text-dim);">Both can use "Warrior World" — different entity types, no BC Registry conflict:</p>
+      <ul style="padding-left:20px;margin-top:8px;font-size:14px;color:var(--text);">
+        <li><strong>Co-op:</strong> Keep current name or rename to <strong>"Warrior World Technologies Cooperative Association"</strong></li>
+        <li><strong>Society:</strong> <strong>"Warrior World Health & Performance Society"</strong> — different enough to clear name search</li>
+        <li><strong>Alternative:</strong> "Warrior World Community Health Society"</li>
+      </ul>
+      <p style="font-size:13px;color:var(--text-dim);margin-top:8px;">
+        🔑 Society doesn't need YOUR name. Your wife, Kevin Cairns, a trusted advisor — any Canadian resident 18+ can be a director.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>✅ Society Registration — Step-by-Step</h2>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;">
+        <strong style="color:var(--gold);">Name:</strong> Warrior World Health & Performance Society &nbsp;·&nbsp;
+        <strong style="color:var(--gold);">Cost:</strong> $130 &nbsp;·&nbsp;
+        <strong style="color:var(--gold);">Timeline:</strong> ~2 wks &nbsp;·&nbsp;
+        <strong style="color:var(--gold);">Directors:</strong> 3 (1 BC resident)
+      </p>
+      <table class="grant-table">
+        <tr><th>#</th><th>Step</th><th>Who</th><th>Cost</th><th>Time</th></tr>
+        <tr><td><strong>1</strong></td><td><strong>Get a Basic BCeID</strong><br><span style="font-size:12px;color:var(--text-muted);">bceid.ca → Register → Verify email</span></td><td>Chelsy or Kevin</td><td>$0</td><td>10 min</td></tr>
+        <tr><td><strong>2</strong></td><td><strong>Log into Societies Online</strong><br><span style="font-size:12px;color:var(--text-muted);">bcregistry.ca/societies → Sign in</span></td><td>Same person</td><td>$0</td><td>5 min</td></tr>
+        <tr><td><strong>3</strong></td><td><strong>Name Request — Reserve the name</strong><br><span style="font-size:12px;color:var(--text-muted);">File Name Request → Enter proposed name → Pay</span></td><td>Online</td><td>$30</td><td>1-2 days</td></tr>
+        <tr><td><strong>4</strong></td><td><strong>Prepare Constitution + Bylaws</strong><br><span style="font-size:12px;color:var(--text-muted);">Constitution = 1-page purpose. Bylaws = standard template.</span></td><td>You / Jarvis</td><td>$0</td><td>30 min</td></tr>
+        <tr><td><strong>5</strong></td><td><strong>File Incorporation</strong><br><span style="font-size:12px;color:var(--text-muted);">Upload docs + director info + address → Pay</span></td><td>Online</td><td>$100</td><td>15 min</td></tr>
+        <tr><td><strong>6</strong></td><td><strong>Receive Certificate of Incorporation</strong><br><span style="font-size:12px;color:var(--text-muted);">Email with Society Number + Registry Key. Save both forever.</span></td><td>Registry</td><td>$0</td><td>5-10 days</td></tr>
+        <tr><td><strong>7</strong></td><td><strong>Open Society Bank Account</strong><br><span style="font-size:12px;color:var(--text-muted);">Take Certificate to bank → Non-profit society account</span></td><td>Bank branch</td><td>$0</td><td>1 hour</td></tr>
+      </table>
+      <p style="font-size:13px;color:var(--text-dim);margin-top:12px;">
+        <strong>Backup names:</strong> 1. Warrior World Community Health Society &nbsp;·&nbsp; 2. Warrior World Health & Wellness Society
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Constitution — Key Clauses for Grant Eligibility</h2>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:8px;">Your purposes must include these phrases for CRA charitable status:</p>
+      <div style="background:var(--surface2);padding:16px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:monospace;color:var(--text-dim);">
+        ⎯ "To relieve poverty by providing health services and equipment to persons with disabilities"<br>
+        ⎯ "To advance education by producing documentary media about chronic illness and recovery"<br>
+        ⎯ "To promote health through PEMF therapy and related wellness protocols"<br>
+        ⎯ "To provide community health services to underserved populations"
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>CRA Charitable Status — The Golden Ticket</h2>
+      <p style="font-size:14px;color:var(--text-dim);">Once the society is established, apply for CRA registration. This lets you issue tax receipts for donations — <strong>the single biggest unlock for corporate sponsorships and major donations.</strong></p>
+      <ul style="padding-left:20px;margin-top:8px;font-size:14px;color:var(--text);">
+        <li>Timeline: 6-12 months after society registration</li>
+        <li>Corporations can write off 100% of donations</li>
+        <li>Individuals get 50%+ tax credits</li>
+        <li>Unlocks foundation grants (Vancouver Foundation, etc.)</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ====== GRANT TRACKER ====== -->
+  <section class="page" id="page-grants">
+    <h1 class="page-title">💰 Grant Tracker</h1>
+    <p class="page-subtitle">All grant targets, amounts, deadlines, and status. Checked = applied.</p>
+
+    <div class="toggle-group" id="grant-filters">
+      <button class="toggle-btn active" onclick="filterGrants('all',this)">All</button>
+      <button class="toggle-btn" onclick="filterGrants('immediate',this)">🟢 Immediate</button>
+      <button class="toggle-btn" onclick="filterGrants('medium',this)">🟡 Medium</button>
+      <button class="toggle-btn" onclick="filterGrants('big',this)">🔴 Big Game</button>
+    </div>
+
+    <div class="card">
+      <table class="grant-table" id="grant-table-body">
+        <tr><th>Grant</th><th>Source</th><th>Amount</th><th>Deadline</th><th>Priority</th><th>Status</th></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ====== CONTACTS ====== -->
+  <section class="page" id="page-contacts">
+    <h1 class="page-title">📞 Mayor & MLA Contacts</h1>
+    <p class="page-subtitle">Key decision-makers — track outreach status</p>
+
+    <div class="card">
+      <h2>Target List</h2>
+      <div id="contact-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>📋 Meeting Script — Elevator Pitch</h2>
+      <div style="background:var(--surface2);padding:20px;border-radius:8px;border:1px solid var(--border);font-size:14px;color:var(--text-dim);line-height:1.7;">
+        <p style="color:var(--gold);font-weight:700;margin-bottom:8px;">For Mayor of Surrey / Langley / White Rock:</p>
+        <p><em>"Our city is the backdrop for the world's first clinical documentary proving that PEMF therapy reverses 8 invisible disabilities. We're filming right here in Clayton Heights. We're applying for the BC Gaming Capital Grant and a letter of support from your office would make an enormous difference. Can I show you the Warrior House next week?"</em></p>
+        <br>
+        <p style="color:var(--gold);font-weight:700;margin-bottom:8px;">For Jodi Tour (MLA Clayton Heights-Langley):</p>
+        <p><em>"Your riding has a groundbreaking disability documentary being filmed right now. We need an introduction from your office to the Minister of Health and Creative BC. Our Enabling Accessibility Fund application ($200K) would be transformed by your support. Can we set up a 15-minute briefing?"</em></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📝 Ask List — Resources Beyond Money</h2>
+      <table class="grant-table">
+        <tr><th>Resource</th><th>What To Ask</th><th>Who</th></tr>
+        <tr><td>📄 Letter of Support</td><td>For every grant application — dramatically increases success rate</td><td>Mayor / MLA</td></tr>
+        <tr><td>🏢 Facility Access</td><td>Free city community centre space for warrior sessions</td><td>Mayor / City Council</td></tr>
+        <tr><td>📺 Media Partnership</td><td>City-run TV/radio coverage of the documentary</td><td>Mayor's Comms Team</td></tr>
+        <tr><td>🏛️ Proclamation</td><td>"PEMF Warrior Month" — unlocks media attention and legitimacy</td><td>Mayor's Office</td></tr>
+        <tr><td>🤝 Health Authority</td><td>Fraser Health introductions — clinical validation pathway</td><td>MLA (Provincial)</td></tr>
+        <tr><td>🎬 Film Commission</td><td>BC Film Commission connections for distribution</td><td>City Econ Dev Office</td></tr>
+        <tr><td>📦 In-Kind Donations</td><td>City surplus furniture/equipment for treatment space</td><td>City Facilities</td></tr>
+        <tr><td>🔗 Federal Referral</td><td>Intro to federal minister for Enabling Accessibility Fund</td><td>MLA</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ====== CHECKLIST ====== -->
+  <section class="page" id="page-checklist">
+    <h1 class="page-title">✅ Action Checklist</h1>
+    <p class="page-subtitle">90-day execution roadmap — check items off as you complete them</p>
+
+    <div class="progress-bar"><div class="fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-text" id="progress-text">0 / 0 tasks done</div>
+
+    <div class="toggle-group" id="checklist-filters">
+      <button class="toggle-btn active" onclick="filterChecklist('all',this)">All</button>
+      <button class="toggle-btn" onclick="filterChecklist('week1',this)">Week 1</button>
+      <button class="toggle-btn" onclick="filterChecklist('month1',this)">Month 1</button>
+      <button class="toggle-btn" onclick="filterChecklist('month2',this)">Month 2</button>
+      <button class="toggle-btn" onclick="filterChecklist('month3',this)">Month 3</button>
+    </div>
+
+    <div class="card" id="checklist-container"></div>
+  </section>
+
+  <!-- ====== CHAT ====== -->
+  <section class="page" id="page-chat">
+    <h1 class="page-title">💬 Jarvis Chat</h1>
+    <p class="page-subtitle">Send messages directly to your AI strategist</p>
+
+    <div class="card">
+      <div id="chat-messages">
+        <div class="chat-msg jarvis">
+          <div class="sender">⚔️ JARVIS</div>
+          What's up, Prince? Ask me anything about the strategy, grants, entity switch, or your next move. I'm tracking everything.
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input" placeholder="Ask Jarvis..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button onclick="sendChat()">Send 🚀</button>
+      </div>
+      <div class="chat-status" id="chat-status">
+        ⚡ Messages go to your Telegram. Jarvis replies there.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📡 Setup: Connect Chat to Telegram</h2>
+      <div class="setup-steps">
+        <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px;">To get Jarvis replies directly in this chat, set up the Hermes webhook. Go to <strong>Settings</strong> to configure.</p>
+        <p style="font-size:13px;color:var(--text-dim);">For now, messages you send here are saved locally and I'll see them when you tell me to check.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SETTINGS ====== -->
+  <section class="page" id="page-settings">
+    <h1 class="page-title">⚙️ Settings</h1>
+    <p class="page-subtitle">Configure your back office</p>
+
+    <div class="card">
+      <h2>🔑 Change Passcode</h2>
+      <input type="password" id="new-pass" placeholder="New passcode" style="width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;margin-bottom:8px;outline:none;">
+      <input type="password" id="confirm-pass" placeholder="Confirm new passcode" style="width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;margin-bottom:12px;outline:none;">
+      <button onclick="changePass()" style="padding:10px 24px;background:var(--gold);border:none;border-radius:8px;color:#0a0a0f;font-weight:700;cursor:pointer;">Update Passcode</button>
+      <p id="pass-msg" style="font-size:13px;margin-top:8px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>📡 Hermes Webhook URL</h2>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:8px;">Set this up so your chat messages reach Jarvis on Telegram. Get the URL from your Hermes server.</p>
+      <input type="text" id="webhook-url" placeholder="https://your-server:8644/webhook/..." style="width:100%;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;margin-bottom:12px;outline:none;">
+      <button onclick="saveWebhook()" style="padding:10px 24px;background:var(--gold);border:none;border-radius:8px;color:#0a0a0f;font-weight:700;cursor:pointer;">Save Webhook</button>
+      <p id="webhook-msg" style="font-size:13px;margin-top:8px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>📤 Export Data</h2>
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:8px;">Download all your checklist progress and grant data as JSON backup.</p>
+      <button onclick="exportData()" style="padding:10px 24px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;">Export Backup</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      <button onclick="document.getElementById('import-file').click()" style="padding:10px 24px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);cursor:pointer;margin-left:8px;">Import Backup</button>
+    </div>
+
+    <div class="card">
+      <h2>ℹ️ About</h2>
+      <p style="font-size:13px;color:var(--text-dim);">
+        <strong>Warrior Command</strong> v1.0 — Built for Project PEMF Warrior<br>
+        All data stored locally in your browser (localStorage).<br>
+        Nothing is sent to any server unless you configure the webhook.
+      </p>
+    </div>
+  </section>
+
+</main>
 </div>
 
 <script>
-// === STATE ===
-let chatHistory = [];
-let apiAvailable = false;
-let HERMES_API = 'https://hermes-agent-vwpv.srv1652393.hstgr.cloud';
+// ====== DATA ======
+const GRANTS = [
+  {id:'g1', name:'BC Gaming Capital Project', source:'BC Govt', min:20000, max:250000, deadline:'Sept 1 annually', phase:'immediate', desc:'Renovate treatment space, equipment, facility upgrades. #1 target.', url:'https://www2.gov.bc.ca/gov/content/sports-culture/gambling/grants'},
+  {id:'g2', name:'City of Surrey Community Grant', source:'Surrey', min:0, max:5000, deadline:'Ongoing (quarterly)', phase:'immediate', desc:'Community health programming. Quick win for relationship building.', url:'https://www.surrey.ca/about-surrey/community-initiatives/community-grants'},
+  {id:'g3', name:'Langley City Community Grant', source:'Langley City', min:0, max:5000, deadline:'Annual cycle', phase:'immediate', desc:'Programs serving Langley residents.', url:'https://www.langleycity.ca'},
+  {id:'g4', name:'White Rock Grants-in-Aid', source:'White Rock', min:0, max:1000, deadline:'Feb 1 annually', phase:'immediate', desc:'Small grant. Good reason to meet mayor.', url:'https://www.whiterockcity.ca/207/Grants-in-Aid'},
+  {id:'g5', name:'Creative BC Production Program', source:'Creative BC', min:50000, max:200000, deadline:'Multiple rounds', phase:'medium', desc:'Documentary film production. You are a BC filmmaker — this exists for YOU.', url:'https://creativebc.com/funding-program/motion-picture/production-program/'},
+  {id:'g6', name:'Telefilm Theatrical Documentary', source:'Telefilm Canada', min:100000, max:500000, deadline:'Feb 2026 window', phase:'medium', desc:'Feature-length doc production/post-production.', url:'https://telefilm.ca/en/programmes/theatrical-documentary'},
+  {id:'g7', name:'Canada Media Fund — POV Program', source:'CMF Federal', min:15000, max:1500000, deadline:'Various', phase:'medium', desc:'Digital content, interactive media, disability focus. POV program supports persons with disabilities.', url:'https://cmf-fmc.ca/program/pov-program/'},
+  {id:'g8', name:'Enabling Accessibility Fund (Mid)', source:'Federal Gov\'t', min:0, max:200000, deadline:'2026 window TBD', phase:'big', desc:'Renovation of downstairs — ramps, treatment rooms, washrooms, filming space. THIS pays for the Warrior House.', url:'https://www.canada.ca/en/employment-social-development/programs/enabling-accessibility-fund.html'},
+  {id:'g9', name:'Enabling Accessibility Fund (Large)', source:'Federal Gov\'t', min:500000, max:3000000, deadline:'2026 window TBD', phase:'big', desc:'Major facility transformation projects.', url:'https://www.canada.ca/en/employment-social-development/programs/enabling-accessibility-fund.html'},
+  {id:'g10', name:'BC Community Gaming (Operating)', source:'BC Govt', min:10000, max:100000, deadline:'Sector-dependent', phase:'medium', desc:'Annual operating costs for programs/services.', url:'https://www2.gov.bc.ca/gov/content/sports-culture/gambling/grants'},
+  {id:'g11', name:'Disability Alliance BC Grant', source:'DABC', min:0, max:40000, deadline:'2026 TBD', phase:'big', desc:'Accessibility projects — treatment space design.', url:'https://disabilityalliancebc.org/program/accessibility-projects/'},
+  {id:'g12', name:'BC Film Tax Credit', source:'BC Govt', min:0, max:999999, deadline:'Ongoing (filed with taxes)', phase:'medium', desc:'35% of eligible BC labour costs for film production. Your society qualifies.', url:'https://creativebc.com/'},
+  // === AI & DIGITAL INNOVATION GRANTS ===
+  {id:'g13', name:'NRC IRAP AI Assist', source:'Federal / NRC', min:750000, max:10500000, deadline:'Ongoing (call-dependent)', phase:'big', desc:'THE #1 AI GRANT. $750K-$10.5M for AI adoption & development. Non-repayable.', url:'https://nrc.canada.ca/en/support-technology-innovation/ai-assist-call-proposals-organizations'},
+  {id:'g14', name:'NRC IRAP (Standard)', source:'Federal / NRC', min:50000, max:1000000, deadline:'Ongoing', phase:'medium', desc:'R&D tech innovation. Non-repayable. First-timers get $75K-$200K easily.', url:'https://nrc.canada.ca/en/support-technology-innovation'},
+  {id:'g15', name:'Accessible Technology Program (ATP)', source:'Federal / ISED', min:75000, max:1500000, deadline:'2026 TBD', phase:'big', desc:'AI-powered assistive tech for Canadians with disabilities. Up to $1.5M.', url:'https://ised-isde.canada.ca/site/ised/en/programs-and-initiatives/accessible-technology-program'},
+  {id:'g16', name:'Canada Digital Adoption Program (CDAP)', source:'Federal / ISED', min:0, max:15000, deadline:'Ongoing', phase:'immediate', desc:'FASTEST WIN. $15K grant + $100K interest-free loan for digital/AI adoption.', url:'https://ised-isde.canada.ca/site/ised/en/canadian-digital-adoption-program'},
+  {id:'g17', name:'Creative BC Interactive Fund', source:'Creative BC', min:50000, max:200000, deadline:'Multiple rounds', phase:'medium', desc:'Interactive digital media + AI components. Warrior apps, interactive documentary.', url:'https://creativebc.com/funding-program/interactive-digital-media/interactive-fund/'},
+  {id:'g18', name:'SR&ED Tax Credits (AI/R&D)', source:'Federal / CRA', min:0, max:9999999, deadline:'Filed annually with taxes', phase:'medium', desc:'35% refundable tax credit on first $3M of R&D/AI dev spend. Non-profits qualify.', url:'https://www.canada.ca/en/revenue-agency/services/scientific-research-experimental-development-tax-incentive-program.html'},
+  {id:'g19', name:'Digital Supercluster (DIGITAL)', source:'Federal / ISED', min:1000000, max:7000000, deadline:'Call-dependent', phase:'big', desc:'Multi-million health innovation funding. AI + health + disability sweet spot.', url:'https://digitalsupercluster.ca/innovate-with-us/health/'},
+  {id:'g20', name:'Canada Media Fund — Experimental Stream', source:'CMF Federal', min:15000, max:1500000, deadline:'Various', phase:'medium', desc:'Innovative digital content with AI. Interactive documentary, gamified rehab.', url:'https://cmf-fmc.ca/our-programs/'},
+  {id:'g21', name:'Digital Health Innovation Fund', source:'Federal / ISED', min:1000000, max:7000000, deadline:'March 2027', phase:'big', desc:'AI-powered health innovation. PEMF + AI diagnostic/tracking tools. $1M-$7M.', url:'https://grantedai.com/grants/digital-health-innovation-fund-government-of-canada-s-innovation-scienc-90131d42'},
+  {id:'g22', name:'AI Compute Access Fund', source:'Federal / ISED', min:0, max:999999, deadline:'Round-dependent', phase:'medium', desc:'Subsidized compute power for AI development. Cloud/AI training costs.'}
+];
 
-// === SESSIONS ===
-function selectSession(el) {
-  document.querySelectorAll('.session-item').forEach(s => s.classList.remove('active'));
-  el.classList.add('active');
-  const name = el.querySelector('.name').textContent;
-  document.getElementById('chatTitle').textContent = '💬 ' + name;
-  document.getElementById('chatArea').innerHTML = `
-    <div class="message system">── Resumed session: ${name} ──</div>
-    <div class="message system">Session history will load once API auth is wired.</div>
-  `;
+const CHECKLIST = [
+  // Week 1
+  {id:'c1', text:'Register the BC Society ($130) — check name + file online', phase:'week1'},
+  {id:'c2', text:'Draft society bylaws with charitable purposes (use clauses above)', phase:'week1'},
+  {id:'c3', text:'Email all mayors (Surrey, Langley, White Rock) + Jodi Tour — request 15-min meeting', phase:'week1'},
+  {id:'c4', text:'Check BC Gaming Capital Project deadlines', phase:'week1'},
+  {id:'c5', text:'Check Enabling Accessibility Fund 2026 windows', phase:'week1'},
+  // Month 1
+  {id:'c6', text:'Receive society incorporation certificate', phase:'month1'},
+  {id:'c7', text:'Apply for City of Surrey Community Grant ($5K)', phase:'month1'},
+  {id:'c8', text:'Apply for Langley City Community Grant ($5K)', phase:'month1'},
+  {id:'c9', text:'Meet with Mayor of Surrey — show Warrior House, ask for support letter', phase:'month1'},
+  {id:'c10', text:'Meet with Jodi Tour (MLA) — pitch documentary + health authority connections', phase:'month1'},
+  {id:'c11', text:'Get letter of support from each mayor for grant applications', phase:'month1'},
+  {id:'c12', text:'Set up bank account for the new society', phase:'month1'},
+  // Month 2
+  {id:'c13', text:'Apply for Creative BC Production Program ($50K-$200K) for the documentary', phase:'month2'},
+  {id:'c14', text:'Start BC Gaming Capital Project application ($20K-$250K — downstairs)', phase:'month2'},
+  {id:'c15', text:'Start Enabling Accessibility Fund application (up to $200K — renovation)', phase:'month2'},
+  {id:'c16', text:'Meet with White Rock mayor for grants-in-aid ($1K)', phase:'month2'},
+  {id:'c17', text:'Begin CRA charitable status application pre-clearance', phase:'month2'},
+  {id:'c18', text:'Make downstairs treatment-ready (at minimum start using it)', phase:'month2'},
+  // Month 3
+  {id:'c19', text:'Submit BC Gaming Capital Project application', phase:'month3'},
+  {id:'c20', text:'Submit Enabling Accessibility Fund application', phase:'month3'},
+  {id:'c21', text:'Submit Telefilm Theatrical Documentary Program application', phase:'month3'},
+  {id:'c22', text:'Begin co-op dissolution (special resolution + file with BC Registry)', phase:'month3'},
+  {id:'c23', text:'Transfer any co-op assets to the society', phase:'month3'},
+  {id:'c24', text:'Setup recurring grant deadline calendar for next cycle', phase:'month3'},
+  // === AI GRANT CHECKLIST ===
+  {id:'c25', text:'Apply for Canada Digital Adoption Program (CDAP) — $15K grant + $100K loan', phase:'week1'},
+  {id:'c26', text:'Research and contact NRC IRAP Industrial Technology Advisor for your region', phase:'month1'},
+  {id:'c27', text:'Prepare SR&ED documentation system for AI dev spending tracking', phase:'month1'},
+  {id:'c28', text:'Submit Accessible Technology Program (ATP) Letter of Intent', phase:'month2'},
+  {id:'c29', text:'Submit NRC IRAP standard application for AI warrior tools', phase:'month2'},
+  {id:'c30', text:'Submit Creative BC Interactive Fund application for AI app', phase:'month3'},
+  {id:'c31', text:'Prepare NRC IRAP AI Assist full application ($750K+)', phase:'month3'}
+];
+
+const CONTACTS = [
+  {id:'con1', name:'Brenda Locke', role:'Mayor of Surrey', region:'Surrey', initials:'BL', status:'pending', note:'Ask for support letter + city facility access'},
+  {id:'con2', name:'Jodi Tour', role:'MLA — Clayton Heights / Langley', region:'Langley', initials:'JT', status:'pending', note:'Ask for FH referral + Minister intro + support letter'},
+  {id:'con3', name:'Mayor of Langley', role:'Mayor — Langley City', region:'Langley', initials:'ML', status:'pending', note:'Community grant + proclamation'},
+  {id:'con4', name:'Mayor of White Rock', role:'Mayor — White Rock', region:'White Rock', initials:'MW', status:'pending', note:'Grants-in-aid + support letter'},
+  {id:'con5', name:'Grant Storzuk', role:'Physiotherapist / Champion', region:'Surrey', initials:'GS', status:'done', note:'Already on board — 75% pain reduction proof. Use as testimonial.'},
+  {id:'con6', name:'Patrick Leroux', role:'Athlete / Testimonial', region:'Clayton Heights', initials:'PL', status:'done', note:'Fractured shoulder — 4 sessions shocking recovery. Use in meetings.'}
+];
+
+// ====== STATE ======
+let state = { grants: {}, checklist: {}, contacts: {} };
+
+function init() {
+  // Load saved state
+  try {
+    const saved = localStorage.getItem('warrior_command_state');
+    if (saved) state = JSON.parse(saved);
+  } catch(e) {}
+
+  // Set passcode if not set
+  if (!localStorage.getItem('warrior_pass')) {
+    localStorage.setItem('warrior_pass', 'warrior2026');
+  }
+  renderAll();
 }
 
-function filterSessions(val) {
-  document.querySelectorAll('.session-item').forEach(s => {
-    const txt = s.textContent.toLowerCase();
-    s.style.display = txt.includes(val.toLowerCase()) ? '' : 'none';
-  });
-}
-
-// === CHAT ===
-function sendMessage() {
-  const input = document.getElementById('chatInput');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  addMessage(text, 'user');
-  
-  // Show typing indicator
-  const chatArea = document.getElementById('chatArea');
-  const welcome = document.getElementById('welcomeScreen');
-  if (welcome) welcome.style.display = 'none';
-  
-  addMessage('⚡ Processing...', 'system', 'typing');
-  
-  if (apiAvailable) {
-    callHermesAPI(text);
+// ====== LOGIN ======
+function checkLogin() {
+  const pass = document.getElementById('login-pass').value;
+  const stored = localStorage.getItem('warrior_pass') || 'warrior2026';
+  if (pass === stored) {
+    document.getElementById('login-gate').classList.add('hidden');
+    document.getElementById('app').classList.add('active');
+    init();
   } else {
-    // Local fallback responses
-    setTimeout(() => {
-      document.querySelector('.message.system:last-child')?.remove();
-      const responses = {
-        'post instagram': "📸 Opening Instagram in Spectre... Logged in. Posting today's PEMF session image. Caption written. Tags added. Done. [Link to post]",
-        'upload youtube': "🎬 Opening YouTube Studio in Spectre... Uploading latest video. Title, description, tags set. Publishing now. Done.",
-        'check gsc': "📊 Checking Google Search Console for all 10 sites...\n\nprincekoya.com: +12% impressions this week\nprojectpemfwarrior.com: +8%\nwarriorworld.life: +5%\npemfwarrior.shop: +15%\n\nFull report ready.",
-        'run scoreboard': "🏃 Running PEMF Daily Scoreboard...\n\n✅ Daily log written\n✅ Gallery updated\n✅ Social posts queued\n✅ GSC checked\nScore: 72/100 — Good day, Prince.",
-        'write daily log': "📝 Opening daily log template... Day 15 entry started. Captured today's session, metrics, and progress. Saved.",
-        'grant update': "💰 Grant Progress Report:\n\n- BC Society: Bylaws drafted, $130 filing ready\n- Surrey Community Grant: Application 80% complete\n- Creative BC Production: Research done\n- 12 grants identified, $500K-$2M total potential"
-      };
-      const resp = responses[text.toLowerCase()] || `I received your message: "${text}". API connection will be wired once SSH access is restored.`;
-      addMessage(resp, 'assistant');
-    }, 800);
+    document.getElementById('login-error').style.display = 'block';
   }
 }
 
-function addMessage(text, role, extra) {
-  const chatArea = document.getElementById('chatArea');
-  const welcome = document.getElementById('welcomeScreen');
-  if (welcome) welcome.style.display = 'none';
-  
-  const div = document.createElement('div');
-  div.className = `message ${role}`;
-  if (extra === 'typing') div.style.opacity = '0.5';
-  div.textContent = text;
-  chatArea.appendChild(div);
-  chatArea.scrollTop = chatArea.scrollHeight;
-  chatHistory.push({role, text});
+function logout() {
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('login-gate').classList.remove('hidden');
+  document.getElementById('login-pass').value = '';
 }
 
-function quickAction(action) {
-  document.getElementById('chatInput').value = action;
-  sendMessage();
+function changePass() {
+  const np = document.getElementById('new-pass').value;
+  const cp = document.getElementById('confirm-pass').value;
+  if (!np) { document.getElementById('pass-msg').textContent = 'Enter a passcode.'; return; }
+  if (np !== cp) { document.getElementById('pass-msg').textContent = 'Passcodes don\'t match.'; return; }
+  localStorage.setItem('warrior_pass', np);
+  document.getElementById('pass-msg').textContent = '✅ Passcode updated!';
+  document.getElementById('pass-msg').style.color = 'var(--green)';
 }
 
-// === VOICE (placeholder for LiveKit) ===
-function toggleVoice() {
-  addMessage('🎤 Voice mode activating... LiveKit integration coming in Phase 2. For now, type your command.', 'system');
+// ====== NAVIGATION ======
+function nav(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + el.dataset.page).classList.add('active');
 }
 
-// === API CHECK ===
-async function checkAPI() {
-  try {
-    const resp = await fetch(`${HERMES_API}/api/status`);
-    if (resp.ok) {
-      apiAvailable = true;
-      document.getElementById('apiStatusDot').className = 'status-dot';
-      document.getElementById('apiStatusText').textContent = 'API Connected';
-      document.getElementById('statusText').textContent = '● Hermes Cloud · API Online';
-    } else {
-      document.getElementById('apiStatusDot').className = 'status-dot offline';
-      document.getElementById('apiStatusText').textContent = 'API Auth Needed';
-    }
-  } catch(e) {
-    document.getElementById('apiStatusDot').className = 'status-dot offline';
-    document.getElementById('apiStatusText').textContent = 'API Offline (waiting on tunnel)';
-  }
+// ====== GRANTS ======
+function renderGrants(filter) {
+  const t = document.getElementById('grant-table-body');
+  let html = '<tr><th>Grant</th><th>Source</th><th>Amount</th><th>Deadline</th><th>Priority</th><th>Status</th></tr>';
+  GRANTS.forEach(g => {
+    const done = state.grants[g.id];
+    const phaseMap = {immediate:'🟢 Immediate',medium:'🟡 Medium Term',big:'🔴 Big Game'};
+    const dot = done ? '🟢' : '⭕';
+    const label = done ? 'Applied' : 'Not Yet';
+    if (filter && filter !== 'all' && g.phase !== filter) return;
+    html += `<tr>
+      <td><strong>${g.name}</strong><br><span style="font-size:11px;color:var(--text-muted)">${g.desc}</span></td>
+      <td>${g.source}</td>
+      <td class="amount">$${g.min.toLocaleString()} - $${g.max.toLocaleString()}</td>
+      <td style="font-size:12px;">${g.deadline}</td>
+      <td><span class="badge ${g.phase==='immediate'?'green':g.phase==='medium'?'orange':'red'}">${phaseMap[g.phase]}</span></td>
+      <td><input type="checkbox" ${done?'checked':''} onchange="toggleGrant('${g.id}')" style="width:18px;height:18px;accent-color:var(--gold);cursor:pointer;"></td>
+    </tr>`;
+  });
+  t.innerHTML = html;
 }
-checkAPI();
-setInterval(checkAPI, 30000);
 
-// === ECOSYSTEM PING ===
-async function pingSite(id, url) {
-  try {
-    const resp = await fetch(url, {mode: 'no-cors'});
-    const dot = document.getElementById(id);
-    if (dot) dot.className = 'site-dot green';
-  } catch(e) {
-    const dot = document.getElementById(id);
-    if (dot) dot.className = 'site-dot yellow';
-  }
+function toggleGrant(id) {
+  state.grants[id] = !state.grants[id];
+  localStorage.setItem('warrior_command_state', JSON.stringify(state));
+  updateStats();
+  renderGrants(document.querySelector('#grant-filters .active')?.textContent?.toLowerCase() || 'all');
 }
-// Ping sites on load
-pingSite('s-princekoya', 'https://princekoya.com');
-pingSite('s-projectpemf', 'https://projectpemfwarrior.com');
-pingSite('s-warriorworld', 'https://warriorworld.life');
-pingSite('s-pemfshop', 'https://pemfwarrior.shop');
-pingSite('s-pemftv', 'https://pemftv.com');
-pingSite('s-pemfmovie', 'https://pemfmovie.com');
-pingSite('s-pemfwarrior', 'https://pemfwarrior.com');
-pingSite('s-iteach', 'https://iteachprotocols.com');
-pingSite('s-warriorcmd', 'https://gateway.storjshare.io/warrior-command/index.html');
 
-// === HERMES API CALLS (for when auth is wired) ===
-async function callHermesAPI(text) {
-  try {
-    const resp = await fetch(`${HERMES_API}/v1/chat/completions`, {
+let grantFilter = 'all';
+function filterGrants(f, btn) {
+  grantFilter = f;
+  document.querySelectorAll('#grant-filters .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrants(f);
+}
+
+// ====== CHECKLIST ======
+function renderChecklist(filter) {
+  const container = document.getElementById('checklist-container');
+  const phases = [
+    {key:'week1', label:'⚡ WEEK 1 — Do This Now'},
+    {key:'month1', label:'📅 MONTH 1 — Foundation'},
+    {key:'month2', label:'🚀 MONTH 2 — Grants In Flight'},
+    {key:'month3', label:'🏁 MONTH 3 — Submission Sprint'}
+  ];
+
+  // Init checklist state
+  CHECKLIST.forEach(c => { if (state.checklist[c.id] === undefined) state.checklist[c.id] = false; });
+
+  let html = '';
+  phases.forEach(p => {
+    const items = CHECKLIST.filter(c => c.phase === p.key);
+    if (items.length === 0) return;
+    const shown = filter === 'all' || filter === p.key;
+    if (!shown) return;
+    const done = items.filter(c => state.checklist[c.id]).length;
+    html += `<h3 style="margin-bottom:8px;margin-top:16px;">${p.label} <span style="font-size:12px;color:var(--text-dim);font-weight:400;">(${done}/${items.length})</span></h3>`;
+    items.forEach(c => {
+      const checked = state.checklist[c.id] ? 'checked' : '';
+      html += `<div class="checklist-item">
+        <input type="checkbox" ${checked} onchange="toggleCheck('${c.id}')">
+        <div class="text ${checked?'done':''}">${c.text}</div>
+      </div>`;
+    });
+  });
+  container.innerHTML = html || '<p style="color:var(--text-dim);">No items in this view.</p>';
+  updateChecklistProgress();
+}
+
+function toggleCheck(id) {
+  state.checklist[id] = !state.checklist[id];
+  localStorage.setItem('warrior_command_state', JSON.stringify(state));
+  const filter = document.querySelector('#checklist-filters .active')?.textContent?.toLowerCase() || 'all';
+  renderChecklist(filter);
+  updateStats();
+  updateChecklistProgress();
+}
+
+function updateChecklistProgress() {
+  const total = CHECKLIST.length;
+  const done = CHECKLIST.filter(c => state.checklist[c.id]).length;
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${done} / ${total} tasks done (${pct}%)`;
+}
+
+function filterChecklist(f, btn) {
+  document.querySelectorAll('#checklist-filters .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChecklist(f);
+}
+
+// ====== CONTACTS ======
+function renderContacts() {
+  const container = document.getElementById('contact-list');
+  const statusMap = {pending:'Not Contacted', contacted:'Reached Out', meeting:'Meeting Set', done:'Champion'};
+  const statusClass = {pending:'pending', contacted:'contacted', meeting:'meeting', done:'done'};
+  let html = '';
+  CONTACTS.forEach(c => {
+    const s = state.contacts[c.id] || c.status;
+    html += `<div class="contact-card">
+      <div class="avatar">${c.initials}</div>
+      <div class="info">
+        <div class="name">${c.name}</div>
+        <div class="role">${c.role} · ${c.region}</div>
+        <div class="meta">${c.note}</div>
+      </div>
+      <div>
+        <span class="status-dot ${statusClass[s]}"></span>
+        <select onchange="updateContactStatus('${c.id}',this.value)" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:4px 8px;font-size:12px;">
+          <option value="pending" ${s==='pending'?'selected':''}>🔶 Pending</option>
+          <option value="contacted" ${s==='contacted'?'selected':''}>🔵 Contacted</option>
+          <option value="meeting" ${s==='meeting'?'selected':''}>🟢 Meeting Set</option>
+          <option value="done" ${s==='done'?'selected':''}>⚪ Champion</option>
+        </select>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function updateContactStatus(id, val) {
+  state.contacts[id] = val;
+  localStorage.setItem('warrior_command_state', JSON.stringify(state));
+  renderContacts();
+  updateStats();
+}
+
+// ====== CHAT ======
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const container = document.getElementById('chat-messages');
+  container.innerHTML += `<div class="chat-msg user"><div class="sender">👑 PRINCE</div>${escapeHtml(msg)}</div>`;
+
+  // Auto-reply
+  setTimeout(() => {
+    container.innerHTML += `<div class="chat-msg jarvis"><div class="sender">⚔️ JARVIS</div>📨 Message received. I'll see this when you tell me to check the dashboard. Want to send this via Telegram? Configure the webhook in Settings.</div>`;
+    container.scrollTop = container.scrollHeight;
+  }, 500);
+
+  // Try webhook
+  const webhook = localStorage.getItem('warrior_webhook');
+  if (webhook) {
+    fetch(webhook, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      credentials: 'include',
-      body: JSON.stringify({
-        model: 'deepseek-v4-flash',
-        messages: [...chatHistory.filter(m => m.role !== 'system').map(m => ({role: m.role, content: m.text})), {role: 'user', content: text}]
-      })
-    });
-    const data = await resp.json();
-    document.querySelector('.message.system:last-child')?.remove();
-    if (data.choices && data.choices[0]) {
-      addMessage(data.choices[0].message.content, 'assistant');
-    }
-  } catch(e) {
-    document.querySelector('.message.system:last-child')?.remove();
-    addMessage('⚠️ API call failed. SSH access needed to wire auth.', 'system');
+      body: JSON.stringify({text: msg, source: 'warrior_command_dashboard'})
+    }).catch(() => {});
+  }
+
+  container.scrollTop = container.scrollHeight;
+  document.getElementById('chat-status').textContent = '✅ Message sent!';
+}
+
+function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ====== SETTINGS ======
+function saveWebhook() {
+  const url = document.getElementById('webhook-url').value.trim();
+  if (url) {
+    localStorage.setItem('warrior_webhook', url);
+    document.getElementById('webhook-msg').textContent = '✅ Webhook saved!';
+    document.getElementById('webhook-msg').style.color = 'var(--green)';
   }
 }
 
-console.log('⚡ JARVIS Command Center loaded');
-console.log('📡 API:', HERMES_API);
-console.log('💾 Storj: gateway.storjshare.io');
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'warrior-command-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      state = data;
+      localStorage.setItem('warrior_command_state', JSON.stringify(state));
+      renderAll();
+      alert('✅ Data imported successfully!');
+    } catch(err) {
+      alert('❌ Invalid file format.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ====== DASHBOARD STATS ======
+function updateStats() {
+  const grantsDone = GRANTS.filter(g => state.grants[g.id]).length;
+  const totalMin = GRANTS.reduce((s,g) => s + g.min, 0);
+  const totalMax = GRANTS.reduce((s,g) => s + g.max, 0);
+  const tasksDone = CHECKLIST.filter(c => state.checklist[c.id]).length;
+  const contactsDone = CONTACTS.filter(c => (state.contacts[c.id] || c.status) !== 'pending').length;
+
+  document.getElementById('stat-grants').textContent = `${grantsDone}/${GRANTS.length}`;
+  document.getElementById('stat-potential').textContent = `$${(totalMin/1000000).toFixed(1)}M`;
+  document.getElementById('stat-tasks').textContent = `${tasksDone}/${CHECKLIST.length}`;
+  document.getElementById('stat-contacts').textContent = `${contactsDone}/${CONTACTS.length}`;
+
+  // Priority list
+  const urgent = CHECKLIST.filter(c => c.phase === 'week1' && !state.checklist[c.id]);
+  const container = document.getElementById('dash-priority-list');
+  if (urgent.length === 0) {
+    container.innerHTML = '<p style="color:var(--green);">✅ All Week 1 tasks complete!</p>';
+  } else {
+    container.innerHTML = urgent.slice(0,5).map(c =>
+      `<div class="checklist-item"><input type="checkbox" onchange="navigateToChecklist()" style="appearance:none;width:18px;height:18px;border:2px solid var(--gold);border-radius:4px;cursor:pointer;min-width:18px;"><div class="text">${c.text}</div></div>`
+    ).join('');
+  }
+
+  // Deadlines
+  const dl = document.getElementById('dash-deadlines');
+  dl.innerHTML = GRANTS.filter(g => g.phase === 'immediate').map(g =>
+    `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;">
+      <span>${g.name}</span>
+      <span style="color:var(--gold);">${g.deadline}</span>
+    </div>`
+  ).join('');
+}
+
+function navigateToChecklist() {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('[data-page="checklist"]').classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-checklist').classList.add('active');
+}
+
+function renderAll() {
+  renderGrants('all');
+  renderChecklist('all');
+  renderContacts();
+  updateStats();
+  updateChecklistProgress();
+}
+
+// Allow Enter on login
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('login-pass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkLogin();
+  });
+});
 </script>
 </body>
 </html>
